@@ -37,7 +37,7 @@ phirdot = 0
 r = 0.0201
 d = 0.052
 delta_x = 0
-delta_w = 0
+delta_w = np.pi / 2
 
 while robot.step(timestep) != -1:
     # read ground sensors
@@ -45,10 +45,14 @@ while robot.step(timestep) != -1:
     for gs_val in gs:
         gs_values.append(gs_val.getValue())
 
-    # print(gs_values)
+    # stop
+    if gs_values[0] < 450 and gs_values[1] < 450 and gs_values[2] < 450:
+        if delta_x > 3.0:
+            phildot = 0
+            phirdot = 0
 
     # go straight
-    if gs_values[0] > 500 and gs_values[1] < 350 and gs_values[2] > 500:
+    elif gs_values[0] > 500 and gs_values[1] < 350 and gs_values[2] > 500:
         phildot = MAX_SPEED
         phirdot = MAX_SPEED
     # if left sensor is hitting the line, turn left
@@ -64,7 +68,7 @@ while robot.step(timestep) != -1:
     delta_x += r * delta_t * (phildot + phirdot) / 2.0
     delta_w += r * delta_t * (phirdot - phildot) / d
 
-    print (delta_x, delta_w)
+    print (delta_x, delta_w * 180.0 / np.pi)
 
     # set actuator
     motor_left.setVelocity(phildot)
